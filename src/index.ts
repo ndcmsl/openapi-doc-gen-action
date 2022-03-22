@@ -17,9 +17,10 @@ async function getTopics(): Promise<any> {
 }
 
 function genApiDocs(): void {
-    exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start', (error, stdout, stderr) => {
+    const result = exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start', (error, stdout, stderr) => {
         console.log(error, stdout, stderr);
     });
+    console.log(result);
     pushCommit();
 }
 
