@@ -1,5 +1,5 @@
 import { exec } from 'child_process';
-import { getInput, setFailed } from '@actions/core';
+import { getInput, setFailed, setOutput } from '@actions/core';
 import { Octokit } from "@octokit/rest";
 
 const token: string = getInput('token');
@@ -18,25 +18,15 @@ async function getTopics(): Promise<any> {
 
 async function genApiDocs() {
     await exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start');
-    pushCommit();
-}
-
-function pushCommit(): void {
-    exec(`git config advice.ignoredHook false && \
-            git config --global user.email "actions@github.com" && \
-            git config --global user.name "Github Action" && \
-            git add openapi.json && \
-            git commit -m "chore: update API docs [skip ci]" && \
-            git push https://${token}@github.com/${owner}/${repo}.git`, (error, stdout, stderr) => {
-       console.log(error);
-    });
 }
 
 async function main(): Promise<void> {
     const { data } = await getTopics();
-    if(data.names.includes('microservice')) {
+    const topic = data.names[0];
+    if(topic === 'microservice') {
         genApiDocs();
     }
+    setOutput('topic', topic);
 }
 
 try {
