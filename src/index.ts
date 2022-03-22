@@ -17,18 +17,19 @@ async function getTopics(): Promise<any> {
 }
 
 function genApiDocs(): void {
-    const result = exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start');
-    console.log(result.stdout);
+    exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start');
     pushCommit();
 }
 
 function pushCommit(): void {
-    console.log("HEHEHE")
-    exec(`git config --global user.email "actions@github.com" && \
-            git config --global user.name "Github Action" && \
-            git add openapi.json && \
-            git commit -m "chore: update API docs [skip ci]" && \
-            git push https://${token}@github.com/${owner}/${repo}.git`);
+    exec('pwd && git status', (error, stdout, stderr) => {
+        console.log(error, stdout, stderr);
+    })
+    // exec(`git config --global user.email "actions@github.com" && \
+    //         git config --global user.name "Github Action" && \
+    //         git add openapi.json && \
+    //         git commit -m "chore: update API docs [skip ci]" && \
+    //         git push https://${token}@github.com/${owner}/${repo}.git`);
 }
 
 async function main(): Promise<void> {
