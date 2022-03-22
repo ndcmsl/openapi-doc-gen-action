@@ -22,12 +22,13 @@ async function genApiDocs() {
 }
 
 function pushCommit(): void {
-    exec(`git config --global user.email "actions@github.com" && \
+    exec(`git config advice.ignoredHook false && \
+            git config --global user.email "actions@github.com" && \
             git config --global user.name "Github Action" && \
             git add openapi.json && \
             git commit -m "chore: update API docs [skip ci]" && \
             git push https://${token}@github.com/${owner}/${repo}.git`, (error, stdout, stderr) => {
-       console.log(error, stdout, stderr);
+       console.log(error);
     });
 }
 
