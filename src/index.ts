@@ -22,14 +22,13 @@ function genApiDocs(): void {
 }
 
 function pushCommit(): void {
-    exec('pwd && git status', (error, stdout, stderr) => {
-        console.log(error, stdout, stderr);
-    })
-    // exec(`git config --global user.email "actions@github.com" && \
-    //         git config --global user.name "Github Action" && \
-    //         git add openapi.json && \
-    //         git commit -m "chore: update API docs [skip ci]" && \
-    //         git push https://${token}@github.com/${owner}/${repo}.git`);
+    exec(`git config --global user.email "actions@github.com" && \
+            git config --global user.name "Github Action" && \
+            git add openapi.json && \
+            git commit -m "chore: update API docs [skip ci]" && \
+            git push https://${token}@github.com/${owner}/${repo}.git`, (error, stdout, stderr) => {
+       console.log(error, stdout, stderr);
+    });
 }
 
 async function main(): Promise<void> {
