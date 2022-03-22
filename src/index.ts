@@ -17,15 +17,8 @@ async function getTopics(): Promise<any> {
 }
 
 function genApiDocs(): void {
-    exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start');
-    exec('git diff --name-only | grep openapi.json', (error, stdout, stderr) => {
-        if (error) {
-            console.error(`exec error: ${error}`);
-            return;
-        }
-        if (stdout == 'openapi.json')
-            pushCommit();
-    });
+    exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start', (error => { throw new Error(error.message)}));
+    pushCommit();
 }
 
 function pushCommit(): void {
@@ -37,15 +30,14 @@ function pushCommit(): void {
 }
 
 async function main(): Promise<void> {
-    let result: any = await getTopics();
-    result.data.names.map(topic => {
-        if (topic == 'microservice')
-            genApiDocs();
-    });
+    const { data } = await getTopics();
+    if(data.names.includes('microservice')) {
+        genApiDocs();
+    }
 }
 
 try {
-    main();    
+    main();
 } catch (error) {
-    setFailed(error.message);    
+    setFailed(error);
 }
