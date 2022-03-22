@@ -1,0 +1,12 @@
+name: 'Gen openapi doc'
+description: 'Gen openapi doc'
+inputs:
+  token:
+    description: Github token.
+    required: true
+  repo:
+    description: Repository name.
+    required: true
+runs:
+  using: 'node16'
+  main: 'lib/index.js'
