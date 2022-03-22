@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import { getInput, setFailed, setOutput } from '@actions/core';
 import { Octokit } from "@octokit/rest";
+const fs = require('fs')
 
 const token: string = getInput('token');
 const owner: string = getInput('repo').split("/")[0];
@@ -17,7 +18,10 @@ async function getTopics(): Promise<any> {
 }
 
 async function genApiDocs() {
-    await exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start');
+    let openapiFile: any = fs.readFileSync('./openapi.json');
+    let apiVersion: string = JSON.parse(openapiFile).info.version;
+
+    await exec( `DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${apiVersion} npx nest start`);
 }
 
 async function main(): Promise<void> {
