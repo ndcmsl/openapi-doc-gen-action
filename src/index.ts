@@ -16,8 +16,8 @@ async function getTopics(): Promise<any> {
     });
 }
 
-function genApiDocs(): void {
-    exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start');
+async function genApiDocs() {
+    await exec('DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true npx nest start');
     pushCommit();
 }
 
