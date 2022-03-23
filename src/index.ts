@@ -6,6 +6,7 @@ const fs = require('fs')
 const token: string = getInput('token');
 const owner: string = getInput('repo').split("/")[0];
 const repo: string = getInput('repo').split("/")[1];
+const packageVersion: number = parseInt(getInput('core-nest-module-version').split('.')[1]);
 const octokit = new Octokit({
     auth: token
 });
@@ -27,7 +28,7 @@ async function genApiDocs() {
 async function main(): Promise<void> {
     const { data } = await getTopics();
     const topic = data.names[0];
-    if(topic === 'microservice') {
+    if(topic === 'microservice' && packageVersion >= 27) {
         genApiDocs();
     }
     setOutput('topic', topic);
