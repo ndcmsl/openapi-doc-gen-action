@@ -5,6 +5,7 @@ const fs = require('fs')
 
 const token: string = getInput('token');
 const owner: string = getInput('repo').split("/")[0];
+console.log('>>>>>>>>>>>>>', owner);
 // const repo: string = getInput('repo').split("/")[1];
 const packageVersion: number = parseInt(getInput('core-nest-module-version').split('.')[1]);
 const octokit = new Octokit({
