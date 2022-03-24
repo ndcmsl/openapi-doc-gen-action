@@ -21,6 +21,7 @@ async function getTopics(): Promise<any> {
 async function genApiDocs() {
     let openapiFile: any = fs.readFileSync('./openapi.json');
     let apiVersion: string = JSON.parse(openapiFile).info.version;
+    setOutput('apiVersion', apiVersion);
 
     await exec( `DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${apiVersion} npx nest start`);
 }
