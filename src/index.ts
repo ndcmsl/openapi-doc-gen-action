@@ -5,18 +5,18 @@ const fs = require('fs')
 
 const token: string = getInput('token');
 const owner: string = getInput('repo').split("/")[0];
-const repo: string = getInput('repo').split("/")[1];
+// const repo: string = getInput('repo').split("/")[1];
 const packageVersion: number = parseInt(getInput('core-nest-module-version').split('.')[1]);
 const octokit = new Octokit({
     auth: token
 });
 
-async function getTopics(): Promise<any> {
-    return await octokit.rest.repos.getAllTopics({
-        owner,
-        repo
-    });
-}
+// async function getTopics(): Promise<any> {
+//     return await octokit.rest.repos.getAllTopics({
+//         owner,
+//         repo
+//     });
+// }
 
 async function genApiDocs() {
     let openapiFile: any = fs.readFileSync('./openapi.json');
@@ -34,7 +34,7 @@ async function main(): Promise<void> {
     // setOutput('topic', topic);
     // setOutput('data', data);
     setOutput('owner', owner);
-    setOutput('repo', repo);
+    setOutput('repo', owner);
 }
 
 try {
