@@ -4,8 +4,10 @@ import { Octokit } from "@octokit/rest";
 const fs = require('fs')
 
 const token: string = getInput('token');
-const owner: string = getInput('repo').split("/")[0];
-const repo: string = getInput('repo').split("/")[1];
+// const owner: string = getInput('repo').split("/")[0];
+// const repo: string = getInput('repo').split("/")[1];
+const owner: string = 'ndcmsl';
+const repo: string = 'test-package';
 const packageVersion: number = parseInt(getInput('core-nest-module-version').split('.')[1]);
 const octokit = new Octokit({
     auth: token
