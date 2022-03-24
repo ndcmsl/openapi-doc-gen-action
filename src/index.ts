@@ -28,8 +28,7 @@ async function genApiDocs() {
 }
 
 async function main(): Promise<void> {
-    const data = await getTopics();
-    console.log('>>>>>>>>>>', data);
+    const { data } = await getTopics();
     const topic = data.names[0];
     if(topic === 'microservice' && packageVersion >= 27) {
         await genApiDocs();
