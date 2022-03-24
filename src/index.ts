@@ -32,6 +32,9 @@ async function main(): Promise<void> {
         genApiDocs();
     }
     setOutput('topic', topic);
+    setOutput('data', data);
+    setOutput('owner', owner);
+    setOutput('repo', repo);
 }
 
 try {
