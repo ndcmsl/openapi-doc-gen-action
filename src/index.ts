@@ -26,11 +26,11 @@ async function genApiDocs() {
 }
 
 async function main(): Promise<void> {
-    const { data } = await getTopics();
+    const data = await getTopics();
     console.log('>>>>>>>>>>', data);
     const topic = data.names[0];
     if(topic === 'microservice' && packageVersion >= 27) {
-        genApiDocs();
+        await genApiDocs();
     }
     setOutput('topic', topic);
     setOutput('data', data);
