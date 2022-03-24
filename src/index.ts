@@ -5,19 +5,18 @@ const fs = require('fs')
 
 const token: string = getInput('token');
 const owner: string = getInput('repo').split("/")[0];
-console.log('>>>>>>>>>>>>>', owner);
-// const repo: string = getInput('repo').split("/")[1];
+const repo: string = getInput('repo').split("/")[1];
 const packageVersion: number = parseInt(getInput('core-nest-module-version').split('.')[1]);
 const octokit = new Octokit({
     auth: token
 });
 
-// async function getTopics(): Promise<any> {
-//     return await octokit.rest.repos.getAllTopics({
-//         owner,
-//         repo
-//     });
-// }
+async function getTopics(): Promise<any> {
+    return await octokit.rest.repos.getAllTopics({
+        owner,
+        repo
+    });
+}
 
 async function genApiDocs() {
     let openapiFile: any = fs.readFileSync('./openapi.json');
@@ -27,13 +26,14 @@ async function genApiDocs() {
 }
 
 async function main(): Promise<void> {
-    // const { data } = await getTopics();
-    // const topic = data.names[0];
-    // if(topic === 'microservice' && packageVersion >= 27) {
-    //     genApiDocs();
-    // }
-    // setOutput('topic', topic);
-    // setOutput('data', data);
+    const { data } = await getTopics();
+    console.log('>>>>>>>>>>', data);
+    const topic = data.names[0];
+    if(topic === 'microservice' && packageVersion >= 27) {
+        genApiDocs();
+    }
+    setOutput('topic', topic);
+    setOutput('data', data);
     setOutput('owner', owner);
     setOutput('repo', owner);
 }
