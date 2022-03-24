@@ -26,13 +26,13 @@ async function genApiDocs() {
 }
 
 async function main(): Promise<void> {
-    const { data } = await getTopics();
-    const topic = data.names[0];
-    if(topic === 'microservice' && packageVersion >= 27) {
-        genApiDocs();
-    }
-    setOutput('topic', topic);
-    setOutput('data', data);
+    // const { data } = await getTopics();
+    // const topic = data.names[0];
+    // if(topic === 'microservice' && packageVersion >= 27) {
+    //     genApiDocs();
+    // }
+    // setOutput('topic', topic);
+    // setOutput('data', data);
     setOutput('owner', owner);
     setOutput('repo', repo);
 }
