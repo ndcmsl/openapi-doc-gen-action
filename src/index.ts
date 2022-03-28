@@ -23,7 +23,7 @@ async function genApiDocs() {
     let apiVersion: string = JSON.parse(openapiFile).info.version;
     setOutput('apiVersion', apiVersion);
 
-    await exec( `DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${apiVersion} npx nest start`);
+    await exec( `DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${apiVersion} DOC_API_TITLE=${repo} npx nest start`);
 }
 
 async function main(): Promise<void> {
