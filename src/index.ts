@@ -19,10 +19,18 @@ async function getTopics(): Promise<any> {
 }
 
 async function genApiDocs() {
-    let openapiFile: any = fs.readFileSync('./openapi.json');
-    let apiVersion: string = JSON.parse(openapiFile).info.version;
+    const openApiPath = './openapi.json';
+    let apiVersion = '1.0.0';
+    if (fs.existsSync(openApiPath)) {
+        try{
+            const openApiFile = fs.readFileSync(openApiPath);
+            apiVersion = JSON.parse(openApiFile)?.info?.version;
+        }
+        catch (e) {
+            throw new Error(`can't read/parse openapi.json`);
+        }
+    }
     setOutput('apiVersion', apiVersion);
-
     await exec( `DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${apiVersion} DOC_API_TITLE=${repo} npx nest start`);
 }
 
