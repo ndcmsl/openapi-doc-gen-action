@@ -1,5 +1,6 @@
 import { getInput, setFailed, setOutput } from '@actions/core';
 import { Octokit } from "@octokit/rest";
+import { exec } from 'child_process';
 const fs = require('fs')
 
 const token: string = getInput('token');
@@ -18,18 +19,23 @@ async function getTopics(): Promise<any> {
 }
 
 async function genApiDocs() {
-    const { execaSync } = await import("execa");
     const openApiPath = './openapi.json';
     let apiVersion = '1.0.0';
     if (fs.existsSync(openApiPath)) {
         try{
             const openApiFile = fs.readFileSync(openApiPath);
-            const { stdout: tags } = execaSync('git tag -l apiV*');
-            console.log(tags);
+            exec('git tag -l apiV*', (error, stdout, stderr) => {
+                if(error) {
+                    throw new Error(error.message);
+                }
+                else if(stderr) {
+                    throw new Error(stderr);
+                }
+                else if(!stdout.includes(apiVersion)){
+                    updateOpenApiFile(apiVersion);
+                }
+            });
             apiVersion = JSON.parse(openApiFile)?.info?.version;
-            if(!tags.includes(apiVersion)){
-                updateOpenApiFile(apiVersion);
-            }
         }
         catch (e) {
             console.log(e)
@@ -42,9 +48,7 @@ async function genApiDocs() {
 }
 
 async function updateOpenApiFile(version) {
-    const { execaSync } = await import("execa");
-
-    execaSync(`DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${version} DOC_API_TITLE=${repo} npx nest start`, {shell: 'bash'});
+    await exec(`DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${version} DOC_API_TITLE=${repo} npx nest start`);
     setOutput('commitDoc', true);
     setOutput('apiVersion', version);
 }
