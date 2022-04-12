@@ -1,4 +1,4 @@
-import { getInput, setFailed } from '@actions/core';
+import { getInput, setFailed, setOutput } from '@actions/core';
 import { Octokit } from "@octokit/rest";
 const fs = require('fs')
 
@@ -45,11 +45,7 @@ async function updateOpenApiFile(version) {
     const { execaSync } = await import("execa");
 
     execaSync(`DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${version} DOC_API_TITLE=${repo} npx nest start`, {shell: 'bash'});
-    execaSync('git config user.email actions@github.com');
-    execaSync('git config user.name Github_Action');
-    execaSync('git add openapi.json');
-    execaSync(`git commit -m "chore: update API docs to ${version} [skip ci]"`);
-    execaSync(`git tag -a -m "Update API" apiV${version}`);
+    setOutput('commitDoc', true);
 }
 
 async function main(): Promise<void> {
