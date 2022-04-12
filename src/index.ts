@@ -1,5 +1,4 @@
-import { exec } from 'child_process';
-import { getInput, setFailed, setOutput } from '@actions/core';
+import { getInput, setFailed } from '@actions/core';
 import { Octokit } from "@octokit/rest";
 const fs = require('fs')
 
@@ -19,19 +18,38 @@ async function getTopics(): Promise<any> {
 }
 
 async function genApiDocs() {
+    const { execaSync } = await import("execa");
     const openApiPath = './openapi.json';
     let apiVersion = '1.0.0';
     if (fs.existsSync(openApiPath)) {
         try{
             const openApiFile = fs.readFileSync(openApiPath);
+            const { stdout: tags } = execaSync('git tag -l apiV*');
+            console.log(tags);
             apiVersion = JSON.parse(openApiFile)?.info?.version;
+            if(!tags.includes(apiVersion)){
+                updateOpenApiFile(apiVersion);
+            }
         }
         catch (e) {
+            console.log(e)
             throw new Error(`can't read/parse openapi.json`);
         }
     }
-    setOutput('apiVersion', apiVersion);
-    await exec( `DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${apiVersion} DOC_API_TITLE=${repo} npx nest start`);
+    else {
+        updateOpenApiFile(apiVersion);
+    }
+}
+
+async function updateOpenApiFile(version) {
+    const { execaSync } = await import("execa");
+
+    execaSync(`DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${version} DOC_API_TITLE=${repo} npx nest start`, {shell: 'bash'});
+    execaSync('git config user.email "actions@github.com"');
+    execaSync('git config user.name "Github Action"');
+    execaSync('git add openapi.json');
+    execaSync(`git commit -m "chore: update API docs to ${version} [skip ci]"`);
+    execaSync(`git tag -a -m "Update API" apiV${version}`);
 }
 
 async function main(): Promise<void> {
@@ -40,7 +58,6 @@ async function main(): Promise<void> {
     if(topic === 'microservice' && packageVersion >= 27) {
         await genApiDocs();
     }
-    setOutput('topic', topic);
 }
 
 try {
