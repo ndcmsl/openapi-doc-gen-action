@@ -46,6 +46,7 @@ async function updateOpenApiFile(version) {
 
     execaSync(`DOC_API_ACTIVE=true GENERATE_DOCUMENTATION_JSON=true DOC_API_VERSION=${version} DOC_API_TITLE=${repo} npx nest start`, {shell: 'bash'});
     setOutput('commitDoc', true);
+    setOutput('apiVersion', version);
 }
 
 async function main(): Promise<void> {
