@@ -1,4 +1,4 @@
-import { getInput, setFailed, setOutput } from '@actions/core';
+import { debug, error, getInput, setFailed, setOutput } from '@actions/core';
 import { Octokit } from "@octokit/rest";
 import { exec } from 'child_process';
 const fs = require('fs')
@@ -21,24 +21,32 @@ async function getTopics(): Promise<any> {
 async function genApiDocs() {
     const openApiPath = './openapi.json';
     let apiVersion = '1.0.0';
+
+    debug('Checking if openapi file exists...');
     if (fs.existsSync(openApiPath)) {
+        debug('Openapi file found, checking if version has changed...');
         try{
             const openApiFile = fs.readFileSync(openApiPath);
-            exec('git tag -l apiV*', (error, stdout, stderr) => {
-                if(error) {
-                    throw new Error(error.message);
+
+            apiVersion = JSON.parse(openApiFile)?.info?.version;
+            debug(`Current api version is ${apiVersion}`);
+            exec('git tag -l apiV*', (err, stdout, stderr) => {
+                debug(`Current tags are ${stdout}`);
+                if(err) {
+                    error(err.message);
+                    throw new Error(err.message);
                 }
                 else if(stderr) {
+                    error(stderr);
                     throw new Error(stderr);
                 }
                 else if(!stdout.includes(apiVersion)){
+                    debug('Version not found in previous tags, updating api documentation')
                     updateOpenApiFile(apiVersion);
                 }
             });
-            apiVersion = JSON.parse(openApiFile)?.info?.version;
         }
         catch (e) {
-            console.log(e)
             throw new Error(`can't read/parse openapi.json`);
         }
     }
