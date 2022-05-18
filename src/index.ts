@@ -64,6 +64,8 @@ async function updateOpenApiFile(version) {
 async function main(): Promise<void> {
     const { data } = await getTopics();
     const topic = data.names[0];
+
+    debug(`Topic: ${topic}, Core nest module minor version: ${packageVersion}`);
     if(topic === 'microservice' && packageVersion >= 27) {
         await genApiDocs();
     }
